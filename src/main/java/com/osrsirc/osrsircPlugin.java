@@ -74,20 +74,31 @@ public class osrsircPlugin extends Plugin
 		switch (event.getType()) {
 			case PUBLICCHAT:
 				if (config.syncPublicChat())
-					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Public Chat] <" + event.getName() + "> " + event.getMessage());
+					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Public Chat] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
 				break;
 			case CLAN_CHAT:
 				if (config.syncClanChat())
-					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Clan Chat] <" + event.getName() + "> " + event.getMessage());
+					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Clan Chat] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
 				break;
 			case FRIENDSCHAT:
 				if (config.syncFriendsChat())
-					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Friends Chat] <" + event.getName() + "> " + event.getMessage());
+					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Friends Chat] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
 				break;
 		}
 	}
+	// remove <img=Xx> tags if they exist
+	// seem to only be at the start of nicks, only works for that case
+	private String nickCleaner(String nick) {
+		if (nick.contains("<")) {
+			return nick.substring(nick.indexOf(">") + 1);
+		}
+		return nick;
+	}
 
 	// restart irc client on config change
+	// TODO: dont restart on boolean changes
+	// TODO: dont restart on nick change
+	// TODO: dont restart on channel change
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event) {
 		// if config changed was not of our plugin
