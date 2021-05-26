@@ -37,7 +37,19 @@ public interface osrsircConfig extends Config
 	)
 	default int ircPort()
 	{
-		return 6667;
+		return 6697;
+	}
+
+	@ConfigItem(
+			keyName = "ircSecurity",
+			name = "Security",
+			description = "gig",
+			section = connConfig,
+			position = 2
+	)
+	default org.kitteh.irc.client.library.Client.Builder.Server.SecurityType ircSecurity()
+	{
+		return org.kitteh.irc.client.library.Client.Builder.Server.SecurityType.SECURE;
 	}
 
 	@ConfigItem(
@@ -45,7 +57,7 @@ public interface osrsircConfig extends Config
 			name = "Channel",
 			description = "IRC Channel Name",
 			section = connConfig,
-			position = 2
+			position = 3
 	)
 	default String ircChannel()
 	{
@@ -57,7 +69,7 @@ public interface osrsircConfig extends Config
 			name = "IRC Nick",
 			description = "IRC Nickname",
 			section = connConfig,
-			position = 3
+			position = 4
 	)
 	default String ircNick()
 	{
@@ -71,7 +83,7 @@ public interface osrsircConfig extends Config
 	)
 	default boolean syncPublicChat()
 	{
-		return true;
+		return false;
 	}
 
 	@ConfigItem(
