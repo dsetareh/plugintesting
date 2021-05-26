@@ -12,7 +12,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-
+import net.engio.mbassy.listener.Handler;
 
 @Slf4j
 @PluginDescriptor(
@@ -28,13 +28,21 @@ public class osrsircPlugin extends Plugin
 	@Inject
 	private osrsircConfig config;
 
+
 	@Override
 	protected void startUp() throws Exception
 	{
 		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "startup", null);
 		ircClient = org.kitteh.irc.client.library.Client.builder().nick("obamafan69").server().port(6667, org.kitteh.irc.client.library.Client.Builder.Server.SecurityType.INSECURE).host("irc.oftc.net").then().buildAndConnect();
-		ircClient.addChannel("#420_memes_ayy_lmao");
+		ircClient.addChannel("#rs_memes_ayy_lmao");
 		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "connected to irc", null);
+		ircClient.getEventManager().registerEventListener(this);
+	}
+
+	// irc - > osrs
+	@Handler
+	public void privmsg(org.kitteh.irc.client.library.event.user.PrivateMessageEvent event) {
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "IRC PM RECIEVED: " + event.getMessage(), null);
 	}
 
 	@Override
@@ -44,22 +52,12 @@ public class osrsircPlugin extends Plugin
 		ircClient.shutdown();
 
 	}
-
+	// osrs -> irc
 	@Subscribe
 	public void onChatMessage(ChatMessage event) {
 		switch (event.getType()) {
-
-			case FRIENDSCHAT:
-				ircClient.sendMessage("#420_memes_ayy_lmao", "[Friends Chat] <" + event.getName() + "> " + event.getMessage());
-				break;
-			case CLAN_CHAT:
-				ircClient.sendMessage("#420_memes_ayy_lmao", "[Clan Chat] <" + event.getName() + "> " + event.getMessage());
-				break;
-			case PRIVATECHAT:
-				ircClient.sendMessage("#420_memes_ayy_lmao", "[Private Chat] <" + event.getName() + "> " + event.getMessage());
-				break;
 			case PUBLICCHAT:
-				ircClient.sendMessage("#420_memes_ayy_lmao", "[Public Chat] <" + event.getName() + "> " + event.getMessage());
+				ircClient.sendMessage("#rs_memes_ayy_lmao", "[Public Chat] <" + event.getName() + "> " + event.getMessage());
 				break;
 		}
 	}
