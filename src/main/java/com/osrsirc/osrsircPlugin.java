@@ -106,17 +106,12 @@ public class osrsircPlugin extends Plugin
 			return; // don't reload
 
 
-		// if config changed was a boolean, tell IRC and don't reload
-		switch (event.getKey()) {
-			case "syncPublicChat":
-				ircClient.sendMessage(config.ircChannel(), "ALL Chat Syncing: " + config.syncPublicChat());
-				return; // exits
-			case "syncFriendsChat":
-				ircClient.sendMessage(config.ircChannel(), "FC Syncing: " + config.syncFriendsChat());
-				return; // exits
-			case "syncClanChat":
-				ircClient.sendMessage(config.ircChannel(), "CC Syncing: " + config.syncClanChat());
-				return; // exits
+		// if config changed was a boolean, don't reload
+		if (event.getKey() == "syncPublicChat" ||
+			event.getKey() == "syncFriendsChat" ||
+			event.getKey() == "syncClanChat") {
+			// dont reload
+			return;
 		}
 
 
@@ -128,12 +123,12 @@ public class osrsircPlugin extends Plugin
 		startIRC();
 	}
 
-	//
-//	// fires on IRC PM, irc - > osrs
-//	@Handler
-//	public void privmsg(org.kitteh.irc.client.library.event.user.PrivateMessageEvent event) {
-//		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "IRC PM RECIEVED: " + event.getMessage(), null);
-//	}
+
+	// fires on IRC PM, irc - > osrs
+	@Handler
+	public void privmsg(org.kitteh.irc.client.library.event.user.PrivateMessageEvent event) {
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "IRC PM RECIEVED: " + event.getMessage(), null);
+	}
 
 
 	@Provides
