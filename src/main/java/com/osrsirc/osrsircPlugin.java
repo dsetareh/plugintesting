@@ -74,15 +74,15 @@ public class osrsircPlugin extends Plugin
 		switch (event.getType()) {
 			case PUBLICCHAT:
 				if (config.syncPublicChat())
-					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Public Chat] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
+					ircClient.sendMessage(config.ircChannel(), "[ALL] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
 				break;
 			case CLAN_CHAT:
 				if (config.syncClanChat())
-					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Clan Chat] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
+					ircClient.sendMessage(config.ircChannel(), "[CC] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
 				break;
 			case FRIENDSCHAT:
 				if (config.syncFriendsChat())
-					ircClient.sendMessage("#rs_memes_ayy_lmao", "[Friends Chat] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
+					ircClient.sendMessage(config.ircChannel(), "[FC] <" + nickCleaner(event.getName()) + "> " + event.getMessage());
 				break;
 		}
 	}
@@ -103,8 +103,24 @@ public class osrsircPlugin extends Plugin
 	public void onConfigChanged(ConfigChanged event) {
 		// if config changed was not of our plugin
 		if (!event.getGroup().equals("osrsircPlugin"))
-			return; // don't reconnect
-		// else, disconnect and reload irc client
+			return; // don't reload
+
+
+		// if config changed was a boolean, tell IRC and don't reload
+		switch (event.getKey()) {
+			case "syncPublicChat":
+				ircClient.sendMessage(config.ircChannel(), "ALL Chat Syncing: " + config.syncPublicChat());
+				return; // exits
+			case "syncFriendsChat":
+				ircClient.sendMessage(config.ircChannel(), "FC Syncing: " + config.syncFriendsChat());
+				return; // exits
+			case "syncClanChat":
+				ircClient.sendMessage(config.ircChannel(), "CC Syncing: " + config.syncClanChat());
+				return; // exits
+		}
+
+
+		// disconnect and reload irc client
 		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "IRC Config Changed, Reconnecting", null);
 		// disconnect
 		ircClient.shutdown();
